@@ -1,3 +1,0 @@
-/cygdrive/f/univercity/term 2/AP !/miniproject/Dictionary/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/cygdrive/f/univercity/term 2/AP !/miniproject/Dictionary/cmake-build-debug/CMakeFiles/edit_cache.dir
-/cygdrive/f/univercity/term 2/AP !/miniproject/Dictionary/cmake-build-debug/CMakeFiles/Dictionary.dir
