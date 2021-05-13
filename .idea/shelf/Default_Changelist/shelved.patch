@@ -1,0 +1,36 @@
+Index: Dictionary.cpp
+===================================================================
+diff --git a/Dictionary.cpp b/Dictionary.cpp
+deleted file mode 100644
+--- a/Dictionary.cpp	(revision d76d08e7ee354eb6093372bf75067cfea4e35039)
++++ /dev/null	(revision d76d08e7ee354eb6093372bf75067cfea4e35039)
+@@ -1,29 +0,0 @@
+-#include <iostream>
+-
+-using namespace std;
+-
+-struct dictionary{
+-    string word;
+-    dictionary* nxt;
+-    struct synonyms;
+-};
+-
+-struct synonyms {
+-    string synonym;
+-    synonyms *nxt;
+-};
+-
+-void add_word(string ,string);
+-void delete_word(string);
+-void delete_synonym(string);
+-void show_word(string);
+-void show_words();
+-void change_spelling_of_word(string ,string);
+-void words_storage();
+-void read_words(files name);
+-
+-int main() {
+-
+-    return 0;
+-}
+-
