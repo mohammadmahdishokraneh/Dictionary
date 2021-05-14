@@ -4,98 +4,171 @@ using namespace std;
 struct synonyms;
 
 struct dictionary{
-    char* word;
+    char* word = nullptr;
     synonyms *synonyms = nullptr;
     dictionary *nxt = nullptr;
 };
 
 struct synonyms{
-    char* synonym;
+    char* synonym = nullptr;
     synonyms *nxt = nullptr;
 };
 
 dictionary *Head = nullptr;
 
-void add_word(char*);
+bool word_is_available(const char*);
+dictionary *find_word(const char*);
+void arrange();
+void add_word(char*, char*);
 void delete_word(char*);
-void delete_synonym(char*);
+void delete_synonym(char*, const char*);
 void show_word(char*);
 void show_words();
 void change_spelling_of_word(char* ,char*);
-void words_storage();
-// void read_words(files name);
-bool word_is_available(char*);
-dictionary *find_word(char*);
-char** synonym_separation(char*);
-int size_array(char**);
-void arrange();
+//void words_storage();
+//void read_words(files name);
 
 int main() {
+    cout << "Welcome to the dictionary" << endl;
+    for (int i = 0; i > -1; ++i) {
+        cout << "---------------------" << endl;
+        cout << "Enter 1 to add the word and synonyms" << endl;
+        cout << "Enter 2 to delete the word" << endl;
+        cout << "Enter 3 to delete the synonym" << endl;
+        cout << "Enter 4 to display the word and synonyms" << endl;
+        cout << "Enter 5 to display the dictionary" << endl;
+        cout << "Enter 6 to change the word" << endl;
+        cout << "Enter 7 to save the words and synonyms" << endl;
+        cout << "Enter 8 to load the words and synonyms" << endl;
+        cout << "Enter 0 to exit" << endl;
+        cout << "---------------------" << endl;
+        int condition, size;
+        char *word, *synonym, *wrong_word;
+        cout << "choose: ";
+        cin >> condition;
+        switch (condition) {
+            case 1: {
+                cout << "Enter the word: ";
+                cin >> word;
+                cout << "Enter the number of synonyms: ";
+                cin >> size;
+                for (i = 0; i < size; ++i) {
+                    cout << "Enter the synonym: ";
+                    cin >> synonym;
+                    add_word(word, synonym);
+                    arrange();
+                }
+                break;
+            }
+            case 2: {
+                cout << "Enter the word: ";
+                cin >> word;
+                delete_word(word);
+                break;
+            }
+            case 3: {
+                cout << "Enter the word: ";
+                cin >> word;
+                cout << "Enter the synonym: ";
+                cin >> synonym;
+                delete_synonym(word, synonym);
+                break;
+            }
+            case 4: {
+                cout << "Enter the word: ";
+                cin >> word;
+                show_word(word);
+                break;
+            }
+            case 5: {
+                show_words();
+                break;
+            }
+            case 6: {
+                cout << "Enter the wrong word: ";
+                cin >> wrong_word;
+                cout << "Enter the correct word: ";
+                cin >> word;
+                change_spelling_of_word(wrong_word, word);
+                break;
+            }
+            case 7: {
+                break;
+            }
+            case 8: {
+                break;
+            }
+            case 0: {
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
     return 0;
 }
 
-void add_word(char* word_synonyms){
-    char** array_w_s = synonym_separation(word_synonyms);
-    int size = size_array(array_w_s);
+bool word_is_available(const char* word){
+    dictionary *temp = Head;
+    while (temp != nullptr){
+        if (temp->word == word){
+            return true;
+        }
+        temp = temp->nxt;
+    }
+    return false;
+}
+
+dictionary *find_word(const char* word){
+    dictionary *temp = Head;
+    while (temp != nullptr){
+        if (temp->word == word){
+            return temp;
+        }
+        temp = temp->nxt;
+    }
+    return nullptr;
+}
+
+void arrange(){
+
+}
+
+void add_word(char* word, char *synonym){
     dictionary *temp_w;
     synonyms *temp_s;
 
-    if (word_is_available(array_w_s[0])){
-        temp_w = find_word(array_w_s[0]);
+    if (word_is_available(word)){
+        temp_w = find_word(word);
         temp_s = temp_w->synonyms;
         if (temp_s == nullptr){
             temp_s = new synonyms;
-            temp_s->synonym = array_w_s[1];
+            temp_s->synonym = synonym;
             temp_s->nxt = nullptr;
-            for (int i = 2; i < size; ++i) {
-                temp_s->nxt = new synonyms;
-                temp_s = temp_s->nxt;
-                temp_s->synonym = array_w_s[i];
-                temp_s->nxt = nullptr;
-            }
         }else{
             while (temp_s != nullptr)
                 temp_s = temp_s->nxt;
             temp_s = new synonyms;
-            temp_s->synonym = array_w_s[1];
+            temp_s->synonym = synonym;
             temp_s->nxt = nullptr;
-            for (int i = 2; i < size; ++i) {
-                temp_s->nxt = new synonyms;
-                temp_s = temp_s->nxt;
-                temp_s->synonym = array_w_s[i];
-                temp_s->nxt = nullptr;
-            }
         }
     }else if (Head == nullptr){
         Head = new dictionary;
-        Head->word = array_w_s[0];
+        Head->word = word;
         Head->synonyms = new synonyms;
-        Head->synonyms->synonym = array_w_s[1];
+        Head->synonyms->synonym = synonym;
         Head->synonyms->nxt = nullptr;
-        temp_s = Head->synonyms;
-        for (int i = 2; i < size; ++i) {
-            temp_s->nxt = new synonyms;
-            temp_s = temp_s->nxt;
-            temp_s->synonym = array_w_s[i];
-            temp_s->nxt = nullptr;
-        }
         Head->nxt = nullptr;
     }else {
         temp_w = Head;
         while (temp_w != nullptr)
             temp_w = temp_w->nxt;
         temp_w = new dictionary;
-        temp_w->word = array_w_s[0];
-        temp_s = temp_w->synonyms;
-        temp_s = new synonyms;
-        temp_s->synonym = array_w_s[1];
-        temp_s->nxt = nullptr;
-        for (int i = 2; i < size; ++i) {
-            temp_s->nxt = new synonyms;
-            temp_s = temp_s->nxt;
-            temp_s->synonym = array_w_s[i];
-            temp_s->nxt = nullptr;
-        }
+        temp_w->word = word;
+        temp_w->synonyms = new synonyms;
+        temp_w->synonyms->synonym = synonym;
+        temp_w->synonyms->nxt = nullptr;
         temp_w->nxt = nullptr;
     }
 }
@@ -118,10 +191,7 @@ void delete_word(char* word){
         cout << "The word is not available" << endl;
 }
 
-void delete_synonym(char* word_synonym){
-    char** w_s = synonym_separation(word_synonym);
-    char* word = w_s[0];
-    char* synonym = w_s[1];
+void delete_synonym(char* word, const char *synonym){
     dictionary *temp_w1;
     synonyms *temp_s1, *temp_s2;
     if (word_is_available(word)){
@@ -166,4 +236,9 @@ void show_words(){
         cout << endl;
         temp_w = temp_w->nxt;
     }
+}
+
+void change_spelling_of_word(char* wrong_word,char* correct_word){
+    dictionary *temp = find_word(wrong_word);
+    temp->word = correct_word;
 }
