@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 struct synonyms;
@@ -132,7 +133,54 @@ dictionary *find_word(const char* word){
 }
 
 void arrange(){
-
+    dictionary *temp_w1, *before = Head, *temp_w2 = Head;
+    while (temp_w2 != nullptr){
+        if (strcmp(Head->word, Head->nxt->word) > 0 ){
+            Head = Head->nxt;
+            temp_w1 = Head->nxt;
+            Head->nxt = before;
+            before->nxt = temp_w1;
+        }
+        before = Head;
+        temp_w1 = before->nxt;
+        while (temp_w1 != nullptr){
+            if (strcmp(temp_w1->word, temp_w1->nxt->word) > 0){
+                before = temp_w1->nxt;
+                before->nxt = temp_w1;
+                temp_w1->nxt = temp_w1->nxt->nxt;
+            }
+            before = temp_w1;
+            temp_w1 = temp_w1->nxt;
+        }
+        temp_w2 = temp_w2->nxt;
+    }
+    temp_w2 = Head;
+    synonyms *temp_s1, *before_s = temp_w2->synonyms, *temp_s2 = temp_w2->synonyms;
+    while (temp_w2 != nullptr){
+        before_s = temp_w2->synonyms;
+        temp_s2 = temp_w2->synonyms;
+        while (temp_s2 != nullptr){
+            if (strcmp(temp_w2->synonyms->synonym, temp_w2->synonyms->nxt->synonym) > 0 ){
+                temp_w2->synonyms = temp_w2->synonyms->nxt;
+                temp_s1 = temp_w2->synonyms->nxt;
+                temp_w2->synonyms->nxt = before_s;
+                before_s->nxt = temp_s1;
+            }
+            before_s = temp_w2->synonyms;
+            temp_s1 = before_s->nxt;
+            while (temp_s1 != nullptr){
+                if (strcmp(temp_s1->synonym, temp_s1->nxt->synonym) > 0){
+                    before_s = temp_s1->nxt;
+                    before_s->nxt = temp_s1;
+                    temp_s1->nxt = temp_s1->nxt->nxt;
+                }
+                before_s = temp_s1;
+                temp_s1 = temp_s1->nxt;
+            }
+            temp_s2 = temp_s2->nxt;
+        }
+        temp_w2 = temp_w2->nxt;
+    }
 }
 
 void add_word(char* word, char *synonym){
