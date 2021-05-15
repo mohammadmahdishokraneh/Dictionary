@@ -3,17 +3,16 @@
 #include <fstream>
 
 using namespace std;
-struct synonyms;
+
+struct synonyms{
+    char* synonym = nullptr;
+    synonyms *nxt = nullptr;
+};
 
 struct dictionary{
     char* word = nullptr;
     synonyms *synonyms = nullptr;
     dictionary *nxt = nullptr;
-};
-
-struct synonyms{
-    char* synonym = nullptr;
-    synonyms *nxt = nullptr;
 };
 
 dictionary *Head = nullptr;
@@ -58,7 +57,7 @@ int main() {
                     cout << "Enter the synonym: ";
                     cin >> synonym;
                     add_word(word, synonym);
-//                    arrange();
+                    arrange();
                 }
                 break;
             }
@@ -144,53 +143,56 @@ dictionary *find_word(const char* word){
 
 void arrange(){
     dictionary *temp_w1, *before = Head, *temp_w2 = Head;
-    while (temp_w2 != nullptr){
-        if (strcmp(Head->word, Head->nxt->word) > 0 ){
-            Head = Head->nxt;
-            temp_w1 = Head->nxt;
-            Head->nxt = before;
-            before->nxt = temp_w1;
-        }
-        before = Head;
-        temp_w1 = before->nxt;
-        while (temp_w1 != nullptr){
-            if (strcmp(temp_w1->word, temp_w1->nxt->word) > 0){
-                before = temp_w1->nxt;
+    if(Head->nxt != nullptr && Head != nullptr){
+        while (temp_w2 != nullptr){
+            if (strcmp(Head->word, Head->nxt->word) > 0 ){
+                Head = Head->nxt;
+                temp_w1 = Head->nxt;
+                Head->nxt = before;
                 before->nxt = temp_w1;
-                temp_w1->nxt = temp_w1->nxt->nxt;
             }
-            before = temp_w1;
-            temp_w1 = temp_w1->nxt;
-        }
-        temp_w2 = temp_w2->nxt;
-    }
-    temp_w2 = Head;
-    synonyms *temp_s1, *before_s, *temp_s2;
-    while (temp_w2 != nullptr){
-        before_s = temp_w2->synonyms;
-        temp_s2 = temp_w2->synonyms;
-        while (temp_s2 != nullptr){
-            if (strcmp(temp_w2->synonyms->synonym, temp_w2->synonyms->nxt->synonym) > 0 ){
-                temp_w2->synonyms = temp_w2->synonyms->nxt;
-                temp_s1 = temp_w2->synonyms->nxt;
-                temp_w2->synonyms->nxt = before_s;
-                before_s->nxt = temp_s1;
-            }
-            before_s = temp_w2->synonyms;
-            temp_s1 = before_s->nxt;
-            while (temp_s1 != nullptr){
-                if (strcmp(temp_s1->synonym, temp_s1->nxt->synonym) > 0){
-                    before_s = temp_s1->nxt;
-                    before_s->nxt = temp_s1;
-                    temp_s1->nxt = temp_s1->nxt->nxt;
+            before = Head;
+            temp_w1 = before->nxt;
+            while (temp_w1 != nullptr){
+                if (strcmp(temp_w1->word, temp_w1->nxt->word) > 0){
+                    before = temp_w1->nxt;
+                    before->nxt = temp_w1;
+                    temp_w1->nxt = temp_w1->nxt->nxt;
                 }
-                before_s = temp_s1;
-                temp_s1 = temp_s1->nxt;
+                before = temp_w1;
+                temp_w1 = temp_w1->nxt;
             }
-            temp_s2 = temp_s2->nxt;
+            temp_w2 = temp_w2->nxt;
         }
-        temp_w2 = temp_w2->nxt;
+        temp_w2 = Head;
+        synonyms *temp_s1, *before_s, *temp_s2;
+        while (temp_w2 != nullptr){
+            before_s = temp_w2->synonyms;
+            temp_s2 = temp_w2->synonyms;
+            while (temp_s2 != nullptr){
+                if (strcmp(temp_w2->synonyms->synonym, temp_w2->synonyms->nxt->synonym) > 0 ){
+                    temp_w2->synonyms = temp_w2->synonyms->nxt;
+                    temp_s1 = temp_w2->synonyms->nxt;
+                    temp_w2->synonyms->nxt = before_s;
+                    before_s->nxt = temp_s1;
+                }
+                before_s = temp_w2->synonyms;
+                temp_s1 = before_s->nxt;
+                while (temp_s1 != nullptr){
+                    if (strcmp(temp_s1->synonym, temp_s1->nxt->synonym) > 0){
+                        before_s = temp_s1->nxt;
+                        before_s->nxt = temp_s1;
+                        temp_s1->nxt = temp_s1->nxt->nxt;
+                    }
+                    before_s = temp_s1;
+                    temp_s1 = temp_s1->nxt;
+                }
+                temp_s2 = temp_s2->nxt;
+            }
+            temp_w2 = temp_w2->nxt;
+        }
     }
+
 }
 
 void add_word(char* word, char *synonym){
@@ -200,17 +202,11 @@ void add_word(char* word, char *synonym){
     if (word_is_available(word)){
         temp_w = find_word(word);
         temp_s = temp_w->synonyms;
-        if (temp_s == nullptr){
-            temp_s = new synonyms;
-            temp_s->synonym = synonym;
-            temp_s->nxt = nullptr;
-        }else{
-            while (temp_s != nullptr)
-                temp_s = temp_s->nxt;
-            temp_s = new synonyms;
-            temp_s->synonym = synonym;
-            temp_s->nxt = nullptr;
-        }
+        while (temp_s != nullptr)
+            temp_s = temp_s->nxt;
+        temp_s = new synonyms;
+        temp_s->synonym = synonym;
+        temp_s->nxt = nullptr;
     }else if (Head == nullptr){
         Head = new dictionary;
         Head->word = word;
@@ -333,8 +329,17 @@ void read_words(){
     }
 
     char *word, *synonym;
-    while (strcmp(word, ".") != 0){
-        input >> word >> synonym;
+    while (true){
+        input >> word;
+        input >> synonym;
+        if (strcmp(word, ".") != 0)
+            break;
         add_word(word, synonym);
     }
 }
+
+// compiler man cigwin hastesh va error compile nemide
+// dar github gharad dadam
+// iradat proje 1) dar listpeyvandy faghat akharin node gharar darad
+//              2) function haye delet_synonym , read_word (ta dar main farakhany mishavad az barname kharej mishe)
+// mamnoon misham begid chejory in moshkelatesh hal mishe chon man natonestam befahmam

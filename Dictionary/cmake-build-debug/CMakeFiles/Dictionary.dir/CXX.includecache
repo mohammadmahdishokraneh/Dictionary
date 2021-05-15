@@ -9,4 +9,8 @@
 /cygdrive/f/univercity/term 2/AP !/miniproject/Dictionary/Dictionary/main.cpp
 iostream
 -
+cstring
+-
+fstream
+-
 
