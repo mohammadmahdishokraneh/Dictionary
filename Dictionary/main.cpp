@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <fstream>
 
 using namespace std;
 struct synonyms;
@@ -26,8 +27,8 @@ void delete_synonym(char*, const char*);
 void show_word(char*);
 void show_words();
 void change_spelling_of_word(char* ,char*);
-//void words_storage();
-//void read_words(files name);
+void words_storage();
+void read_words();
 
 int main() {
     cout << "Welcome to the dictionary" << endl;
@@ -36,16 +37,16 @@ int main() {
         cout << "Enter 1 to add the word and synonyms" << endl;
         cout << "Enter 2 to delete the word" << endl;
         cout << "Enter 3 to delete the synonym" << endl;
-        cout << "Enter 4 to display the word and synonyms" << endl;
-        cout << "Enter 5 to display the dictionary" << endl;
+        cout << "Enter 4 to show the word and synonyms" << endl;
+        cout << "Enter 5 to show the dictionary" << endl;
         cout << "Enter 6 to change the word" << endl;
         cout << "Enter 7 to save the words and synonyms" << endl;
         cout << "Enter 8 to load the words and synonyms" << endl;
         cout << "Enter 0 to exit" << endl;
         cout << "---------------------" << endl;
+        cout << "choose: ";
         int condition, size;
         char *word, *synonym, *wrong_word;
-        cout << "choose: ";
         cin >> condition;
         switch (condition) {
             case 1: {
@@ -53,11 +54,11 @@ int main() {
                 cin >> word;
                 cout << "Enter the number of synonyms: ";
                 cin >> size;
-                for (i = 0; i < size; ++i) {
+                for (int j = 0; j < size; ++j) {
                     cout << "Enter the synonym: ";
                     cin >> synonym;
                     add_word(word, synonym);
-                    arrange();
+//                    arrange();
                 }
                 break;
             }
@@ -91,29 +92,38 @@ int main() {
                 cout << "Enter the correct word: ";
                 cin >> word;
                 change_spelling_of_word(wrong_word, word);
+                arrange();
                 break;
             }
             case 7: {
+                words_storage();
                 break;
             }
             case 8: {
+                read_words();
                 break;
             }
             case 0: {
+                cout << "Do save information? y/n" << endl;
+                char condition1;
+                cin >> condition1;
+                if (condition1 == 'y')
+                    words_storage();
                 break;
             }
             default:
                 break;
         }
+        if (condition == 0)
+            break;
     }
-
     return 0;
 }
 
 bool word_is_available(const char* word){
     dictionary *temp = Head;
     while (temp != nullptr){
-        if (temp->word == word){
+        if (strcmp(temp->word, word) == 0){
             return true;
         }
         temp = temp->nxt;
@@ -124,7 +134,7 @@ bool word_is_available(const char* word){
 dictionary *find_word(const char* word){
     dictionary *temp = Head;
     while (temp != nullptr){
-        if (temp->word == word){
+        if (strcmp(temp->word, word) == 0){
             return temp;
         }
         temp = temp->nxt;
@@ -155,7 +165,7 @@ void arrange(){
         temp_w2 = temp_w2->nxt;
     }
     temp_w2 = Head;
-    synonyms *temp_s1, *before_s = temp_w2->synonyms, *temp_s2 = temp_w2->synonyms;
+    synonyms *temp_s1, *before_s, *temp_s2;
     while (temp_w2 != nullptr){
         before_s = temp_w2->synonyms;
         temp_s2 = temp_w2->synonyms;
@@ -270,6 +280,7 @@ void show_word(char* word){
         cout << temp_s->synonym << ", ";
         temp_s = temp_s->nxt;
     }
+    cout << endl;
 }
 
 void show_words(){
@@ -289,4 +300,41 @@ void show_words(){
 void change_spelling_of_word(char* wrong_word,char* correct_word){
     dictionary *temp = find_word(wrong_word);
     temp->word = correct_word;
+}
+
+void words_storage(){
+    ofstream output("file", ios::out);
+
+    if (!output){
+        cerr << "some thing wrong" << endl;
+        exit(1);
+    }
+
+    while (Head != nullptr){
+        while (Head->synonyms != nullptr){
+            output << Head->word << " " << Head->synonyms->synonym << endl;
+            Head->synonyms = Head->synonyms->nxt;
+        }
+        Head = Head->nxt;
+    }
+    output << ".";
+    while (Head != nullptr){
+        delete_word(Head->word);
+    }
+
+}
+
+void read_words(){
+    ifstream input("file", ios::in);
+
+    if (!input){
+        cerr << "some thing wrong" << endl;
+        exit(1);
+    }
+
+    char *word, *synonym;
+    while (strcmp(word, ".") != 0){
+        input >> word >> synonym;
+        add_word(word, synonym);
+    }
 }
